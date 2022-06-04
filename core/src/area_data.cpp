@@ -99,7 +99,7 @@ void AreaData::clientJoinedArea(int f_charId, int f_userId)
     emit userJoinedArea(m_index, f_userId);
     //The name will never be shown as we are using a spectator ID. Still nice for people who network sniff.
     //We auto-loop this so you'll never sit in silence unless wanted.
-    emit sendAreaPacketClient(AOPacket("MC",{m_currentMusic, QString::number(-1), ConfigManager::serverName(), QString::number(1)}), f_userId);
+    emit sendAreaPacketClient(AOPacket("MC",{m_currentMusic, "-1", ConfigManager::serverName(), "1"}), f_userId);
 }
 
 QList<int> AreaData::owners() const
@@ -576,10 +576,11 @@ QString AreaData::addJukeboxSong(QString f_song)
             if (l_song.second > 0) {
                 if (m_jukebox_queue.size() == 0) {
 
-                    emit sendAreaPacket(AOPacket("MC",{l_song.first,QString::number(-1)}), index());
+                    emit sendAreaPacket(AOPacket("MC",{l_song.first,"-1","Jukebox","1","0","3"}), index());
                     m_jukebox_timer->start(l_song.second * 1000);
                     setCurrentMusic(f_song);
                     setMusicPlayedBy("Jukebox");
+                    emit sendAreaPacket(AOPacket("CT",{"Jukebox","Now playing " + l_song.first,"1"}), m_index);
                 }
                 m_jukebox_queue.append(f_song);
                 return "Song added to Jukebox.";
@@ -602,7 +603,7 @@ void AreaData::switchJukeboxSong()
     if(m_jukebox_queue.size() == 1) {
         l_song_name = m_jukebox_queue[0];
         QPair<QString,float> l_song = m_music_manager->songInformation(l_song_name, index());
-        emit sendAreaPacket(AOPacket("MC",{l_song.first,"-1"}), m_index);
+        emit sendAreaPacket(AOPacket("MC",{l_song.first,"-1","Jukebox","1","0","3"}), m_index);
         m_jukebox_timer->start(l_song.second * 1000);
     }
     else {
@@ -610,12 +611,13 @@ void AreaData::switchJukeboxSong()
         l_song_name = m_jukebox_queue[l_random_index];
 
         QPair<QString,float> l_song = m_music_manager->songInformation(l_song_name, index());
-        emit sendAreaPacket(AOPacket("MC",{l_song.first,"-1"}), m_index);
+        emit sendAreaPacket(AOPacket("MC",{l_song.first,"-1","Jukebox","1","0","3"}), m_index);
         m_jukebox_timer->start(l_song.second * 1000);
 
         m_jukebox_queue.remove(l_random_index);
         m_jukebox_queue.squeeze();
     }
+    //emit sendAreaPacket(AOPacket("CT",{"Jukebox","Now playing " + l_song_name,"1"}), m_index);
     setCurrentMusic(l_song_name);
     setMusicPlayedBy("Jukebox");
 }
