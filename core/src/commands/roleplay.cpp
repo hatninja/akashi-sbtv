@@ -25,7 +25,7 @@ void AOClient::cmdFlip(int argc, QStringList argv)
     Q_UNUSED(argc);
     Q_UNUSED(argv);
 
-    QString l_sender_name = m_ooc_name;
+    QString l_sender_name = getTag();
     QStringList l_faces = {"heads","tails"};
     QString l_face = l_faces[AOClient::genRand(0,1)];
     sendServerMessageArea(l_sender_name + " flipped a coin and got " + l_face + ".");
@@ -180,7 +180,7 @@ void AOClient::cmd8Ball(int argc, QStringList argv)
         }
     else {
         QString l_response = ConfigManager::magic8BallAnswers().at((genRand(1, ConfigManager::magic8BallAnswers().size() - 1)));
-        QString l_sender_name = m_ooc_name;
+        QString l_sender_name = getTag();
         QString l_sender_message = argv.join(" ");
 
         sendServerMessageArea(l_sender_name + " asked the magic 8-ball, \"" + l_sender_message + "\" and the answer is: " + l_response);

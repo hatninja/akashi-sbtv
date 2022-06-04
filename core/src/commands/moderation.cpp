@@ -178,13 +178,13 @@ void AOClient::cmdHelp(int argc, QStringList argv)
     if (l_command_info.usage.isEmpty() || l_command_info.text.isEmpty()) // my picoseconds :(
         sendServerMessage("Unable to find the command " + l_command_name + ".");
     else
-        sendServerMessage("==Help==\n" +l_command_info.usage + "\n" + l_command_info.text);
+        sendServerMessage("~~ Help ~~\n" +l_command_info.usage + "\n" + l_command_info.text);
 }
 
 void AOClient::cmdMOTD(int argc, QStringList argv)
 {
     if (argc == 0) {
-        sendServerMessage("=== MOTD ===\r\n" + ConfigManager::motd() + "\r\n=============");
+        sendServerMessage(ConfigManager::motd());
     }
     else if (argc > 0) {
         if (checkAuth(ACLFlags.value("MOTD"))) {
@@ -416,7 +416,7 @@ void AOClient::cmdAllowBlankposting(int argc, QStringList argv)
     Q_UNUSED(argc);
     Q_UNUSED(argv);
 
-    QString l_sender_name = m_ooc_name;
+    QString l_sender_name = getTag();
     AreaData* l_area = server->m_areas[m_current_area];
     l_area->toggleBlankposting();
     if (l_area->blankpostingAllowed() == false) {

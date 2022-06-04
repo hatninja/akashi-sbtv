@@ -72,8 +72,10 @@ const QMap<QString, AreaData::Status> AreaData::map_statuses = {
     {"casing",                  AreaData::Status::CASING              },
     {"lfp",                     AreaData::Status::LOOKING_FOR_PLAYERS },
     {"looking-for-players",     AreaData::Status::LOOKING_FOR_PLAYERS },
+    {"building",                AreaData::Status::BUILDING            },
     {"recess",                  AreaData::Status::RECESS              },
     {"gaming",                  AreaData::Status::GAMING              },
+    {"fin",                     AreaData::Status::FIN                 },
 };
 
 void AreaData::clientLeftArea(int f_charId, int f_userId)

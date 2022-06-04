@@ -34,32 +34,32 @@ QStringList AOClient::buildAreaList(int area_idx)
     QStringList entries;
     QString area_name = server->m_area_names[area_idx];
     AreaData* area = server->m_areas[area_idx];
-    entries.append("=== " + area_name + " ===");
+    entries.append("~~ " + area_name + " ~~");
     switch (area->lockStatus()) {
         case AreaData::LockStatus::LOCKED:
-            entries.append("[LOCKED]");
+            entries.append("(LOCKED)");
             break;
         case AreaData::LockStatus::SPECTATABLE:
-            entries.append("[SPECTATABLE]");
+            entries.append("(SPECTATE)");
             break;
         case AreaData::LockStatus::FREE:
         default:
             break;
     }
-    entries.append("[" + QString::number(area->playerCount()) + " users][" + QVariant::fromValue(area->status()).toString().replace("_", "-") + "]");
+    //entries.append("[" + QString::number(area->playerCount()) + " users][" + QVariant::fromValue(area->status()).toString().replace("_", "-") + "]");
     for (AOClient* client : qAsConst(server->m_clients)) {
         if (client->m_current_area == area_idx && client->m_joined) {
             QString char_entry = "[" + QString::number(client->m_id) + "] " + client->m_current_char;
             if (client->m_current_char == "")
                 char_entry += "Spectator";
-            if (client->m_showname != "")
-                char_entry += " (" + client->m_showname + ")";
+            if (client->m_ooc_name != "")
+                char_entry += " (" + client->m_ooc_name + ")";
             if (area->owners().contains(client->m_id))
-                char_entry.insert(0, "[CM] ");
+                char_entry.insert(0, "[CM]");
             if (m_authenticated)
                 char_entry += " (" + client->getIpid() + "): " + client->m_ooc_name;
             if (client->m_is_afk)
-                char_entry += " [AFK]";
+                char_entry += " (AFK)";
             entries.append(char_entry);
         }
     }

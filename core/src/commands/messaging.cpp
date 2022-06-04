@@ -72,8 +72,8 @@ void AOClient::cmdG(int argc, QStringList argv)
     QString l_sender_area = server->m_area_names.value(m_current_area);
     QString l_sender_message = argv.join(" ");
     //Slightly better readability
-    AOPacket l_mod_packet = AOPacket("CT", {"[G][" + m_ipid + "][" + l_sender_area + "]" + l_sender_name, l_sender_message});
-    AOPacket l_user_packet = AOPacket("CT", {"[G][" + l_sender_area + "]" + l_sender_name, l_sender_message});
+    AOPacket l_mod_packet = AOPacket("CT", {"[" + l_sender_area + "][" + m_ipid + "] " + l_sender_name, l_sender_message});
+    AOPacket l_user_packet = AOPacket("CT", {"[" + l_sender_area + "][" + QString::number(m_id) + "] " + l_sender_name, l_sender_message});
     server->broadcast(l_user_packet, l_mod_packet, Server::TARGET_TYPE::AUTHENTICATED);
     return;
 }
@@ -84,7 +84,7 @@ void AOClient::cmdNeed(int argc, QStringList argv)
 
     QString l_sender_area = server->m_area_names.value(m_current_area);
     QString l_sender_message = argv.join(" ");
-    server->broadcast(AOPacket("CT",{"=== Advert ===\n[" + l_sender_area + "] needs " + l_sender_message+ "."}),Server::TARGET_TYPE::ADVERT);
+    server->broadcast(AOPacket("CT",{"~~ Advert ~~\n[" + l_sender_area + "] needs " + l_sender_message+ "."}),Server::TARGET_TYPE::ADVERT);
 }
 
 void AOClient::cmdSwitch(int argc, QStringList argv)
@@ -153,15 +153,15 @@ void AOClient::cmdPM(int argc, QStringList argv)
         return;
     }
     QString l_message = argv.join(" "); //...which means it will not end up as part of the message
-    l_target_client->sendServerMessage("Message from " + m_ooc_name + " (" + QString::number(m_id) + "): " + l_message);
-    sendServerMessage("PM sent to " + QString::number(l_target_id) +". Message: " + l_message);
+    l_target_client->sendPacket("CT",{"From " + getTag(), l_message});
+    sendPacket("CT",{"To " + l_target_client->getTag(), l_message});
 }
 
 void AOClient::cmdAnnounce(int argc, QStringList argv)
 {
     Q_UNUSED(argc);
 
-    sendServerBroadcast("=== Announcement ===\r\n" + argv.join(" ") + "\r\n=============");
+    sendServerBroadcast("~~ Announcement ~~\r\n" + argv.join(" "));
 }
 
 void AOClient::cmdM(int argc, QStringList argv)
@@ -170,7 +170,7 @@ void AOClient::cmdM(int argc, QStringList argv)
 
     QString l_sender_name = m_ooc_name;
     QString l_sender_message = argv.join(" ");
-    server->broadcast(AOPacket("CT", {"[M]" + l_sender_name, l_sender_message}), Server::TARGET_TYPE::MODCHAT);
+    server->broadcast(AOPacket("CT", {"[M] " + l_sender_name, l_sender_message}), Server::TARGET_TYPE::MODCHAT);
 }
 
 void AOClient::cmdGM(int argc, QStringList argv)
@@ -180,7 +180,7 @@ void AOClient::cmdGM(int argc, QStringList argv)
     QString l_sender_name = m_ooc_name;
     QString l_sender_area = server->m_area_names.value(m_current_area);
     QString l_sender_message = argv.join(" ");
-    server->broadcast(AOPacket("CT", {"[G][" + l_sender_area + "]" + "["+ l_sender_name+"][M]", l_sender_message}),Server::TARGET_TYPE::MODCHAT);
+    server->broadcast(AOPacket("CT", {"[M][" + l_sender_area + "] " + l_sender_name, l_sender_message}),Server::TARGET_TYPE::MODCHAT);
 }
 
 void AOClient::cmdLM(int argc, QStringList argv)
@@ -189,7 +189,7 @@ void AOClient::cmdLM(int argc, QStringList argv)
 
     QString l_sender_name = m_ooc_name;
     QString l_sender_message = argv.join(" ");
-    server->broadcast(AOPacket("CT", {"["+ l_sender_name +"][M]", l_sender_message}), m_current_area);
+    server->broadcast(AOPacket("CT", {"[M] "+ l_sender_name +" ", l_sender_message}), m_current_area);
 }
 
 void AOClient::cmdGimp(int argc, QStringList argv)
@@ -520,7 +520,7 @@ void AOClient::cmdA(int argc, QStringList argv)
     argv.removeAt(0);
     QString l_sender_name = m_ooc_name;
     QString l_ooc_message = argv.join(" ");
-    server->broadcast(AOPacket("CT", {"[CM]" + l_sender_name, l_ooc_message}), l_area_id);
+    server->broadcast(AOPacket("CT", {"[CM] " + l_sender_name, l_ooc_message}), l_area_id);
 }
 
 void AOClient::cmdS(int argc, QStringList argv)
@@ -533,7 +533,7 @@ void AOClient::cmdS(int argc, QStringList argv)
 
     for (int i = 0; i <= l_all_areas; i++) {
         if (server->m_areas[i]->owners().contains(m_id))
-            server->broadcast(AOPacket("CT", {"[CM]" + l_sender_name, l_ooc_message}), i);
+            server->broadcast(AOPacket("CT", {"[CM] " + l_sender_name, l_ooc_message}), i);
     }
 }
 

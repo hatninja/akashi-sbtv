@@ -295,6 +295,11 @@ QString ConfigManager::serverName()
     return m_settings->value("Options/server_name", "An Unnamed Server").toString();
 }
 
+QString ConfigManager::oocName()
+{
+    return m_settings->value("Options/ooc_name", "Serv").toString();
+}
+
 QString ConfigManager::motd()
 {
     return m_settings->value("Options/motd", "MOTD not set").toString();

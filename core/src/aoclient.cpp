@@ -57,6 +57,8 @@ void AOClient::clientDisconnected()
         emit server->updatePlayerCount(server->m_player_count);
         server->m_areas[m_current_area]->clientLeftArea(server->getCharID(m_current_char), m_id);
         arup(ARUPType::PLAYER_COUNT, true);
+
+        emit server->m_areas[m_current_area]->sendAreaPacket(AOPacket("CT",{ConfigManager::oocName(), getTag() + " disconnected.", "1"}), m_current_area);
     }
 
     if (m_current_char != "") {
@@ -120,6 +122,9 @@ void AOClient::changeArea(int new_area)
         return;
     }
 
+    //Print before leaving the room. (Show to user)
+    sendServerMessageArea(getTag() + " left to " + server->m_area_names[new_area]);
+
     if (m_current_char != "") {
         server->m_areas[m_current_area]->changeCharacter(server->getCharID(m_current_char), -1);
         server->updateCharsTaken(server->m_areas[m_current_area]);
@@ -131,8 +136,13 @@ void AOClient::changeArea(int new_area)
         m_char_id = -1;
         l_character_taken = true;
     }
+
+    //Print before joining the room. (Hide to user)
+    sendServerMessageArea(getTag() + " joined this room.");
+
     server->m_areas[new_area]->clientJoinedArea(m_char_id, m_id);
     m_current_area = new_area;
+
     arup(ARUPType::PLAYER_COUNT, true);
     sendEvidenceList(server->m_areas[new_area]);
     sendPacket("HP", {"1", QString::number(server->m_areas[new_area]->defHP())});
@@ -152,12 +162,13 @@ void AOClient::changeArea(int new_area)
             sendPacket("TI", {QString::number(l_timer_id), "3"});
         }
     }
-    sendServerMessage("You moved to area " + server->m_area_names[m_current_area]);
+
+    sendServerMessage("~~ " + server->m_area_names[m_current_area] + " ~~");
     if (server->m_areas[m_current_area]->sendAreaMessageOnJoin())
         sendServerMessage(server->m_areas[m_current_area]->areaMessage());
 
     if (server->m_areas[m_current_area]->lockStatus() == AreaData::LockStatus::SPECTATABLE)
-        sendServerMessage("Area " + server->m_area_names[m_current_area] + " is spectate-only; to chat IC you will need to be invited by the CM.");
+        sendServerMessage("This room is spectate-only; to chat IC you will need to be invited by the CM.");
 }
 
 bool AOClient::changeCharacter(int char_id)
@@ -225,18 +236,22 @@ void AOClient::arup(ARUPType type, bool broadcast)
             }
             case ARUPType::STATUS: {
                 QString l_area_status = QVariant::fromValue(l_area->status()).toString().replace("_", "-"); // LOOKING_FOR_PLAYERS to LOOKING-FOR-PLAYERS
-                l_arup_data.append(l_area_status);
+                if (l_area_status == "IDLE") {
+                    l_arup_data.append("");
+                } else {
+                    l_arup_data.append(l_area_status);
+                }
                 break;
             }
             case ARUPType::CM: {
                 if (l_area->owners().isEmpty())
-                    l_arup_data.append("FREE");
+                    l_arup_data.append("None");
                 else {
                     QStringList l_area_owners;
                     const QList<int> l_owner_ids = l_area->owners();
                     for (int l_owner_id : l_owner_ids) {
                         AOClient* l_owner = server->getClientByID(l_owner_id);
-                        l_area_owners.append("[" + QString::number(l_owner->m_id) + "] " + l_owner->m_current_char);
+                        l_area_owners.append("[" + QString::number(l_owner->m_id) + "] " + (l_owner->m_ooc_name != "" ? l_owner->m_current_char : l_owner->m_ooc_name));
                     }
                     l_arup_data.append(l_area_owners.join(", "));
                 }
@@ -244,6 +259,9 @@ void AOClient::arup(ARUPType type, bool broadcast)
             }
             case ARUPType::LOCKED: {
                 QString l_lock_status = QVariant::fromValue(l_area->lockStatus()).toString();
+                if (l_lock_status == "FREE") {
+                    l_lock_status = "OPEN";
+                }
                 l_arup_data.append(l_lock_status);
                 break;
             }
@@ -306,17 +324,17 @@ void AOClient::calculateIpid()
 
 void AOClient::sendServerMessage(QString message)
 {
-    sendPacket("CT", {ConfigManager::serverName(), message, "1"});
+    sendPacket("CT", {ConfigManager::oocName(), message, "1"});
 }
 
 void AOClient::sendServerMessageArea(QString message)
 {
-    server->broadcast(AOPacket("CT", {ConfigManager::serverName(), message, "1"}), m_current_area);
+    server->broadcast(AOPacket("CT", {ConfigManager::oocName(), message, "1"}), m_current_area);
 }
 
 void AOClient::sendServerBroadcast(QString message)
 {
-    server->broadcast(AOPacket("CT", {ConfigManager::serverName(), message, "1"}));
+    server->broadcast(AOPacket("CT", {ConfigManager::oocName(), message, "1"}));
 }
 
 bool AOClient::checkAuth(unsigned long long acl_mask)
@@ -346,6 +364,19 @@ bool AOClient::checkAuth(unsigned long long acl_mask)
     return true;
 }
 
+QString AOClient::getTag()
+{
+    QString tag = "[" + QString::number(m_id) + "] ";
+    if (m_authenticated) {
+            tag.insert(0,"[Mod]");
+    }
+    if (m_ooc_name != "") {
+        tag += m_ooc_name;
+    } else {
+        tag += m_current_char;
+    }
+    return tag;
+}
 
 QString AOClient::getIpid() const
 {

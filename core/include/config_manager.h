@@ -151,6 +151,13 @@ class ConfigManager {
     static QString serverName();
 
     /**
+     * @brief Returns the server's OOC name sent to players.
+     *
+     * @return See short description.
+     */
+    static QString oocName();
+
+    /**
      * @brief Returns the server's Message of the Day.
      *
      * @return See short description.

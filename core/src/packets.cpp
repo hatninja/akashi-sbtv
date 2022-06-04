@@ -143,7 +143,7 @@ void AOClient::pktLoadingDone(AreaData* area, int argc, QStringList argv, AOPack
     sendPacket("DONE");
     sendPacket("BN", {area->background()});
   
-    sendServerMessage("=== MOTD ===\r\n" + ConfigManager::motd() + "\r\n=============");
+    sendServerMessage(ConfigManager::motd());
 
     fullArup(); // Give client all the area data
     if (server->timer->isActive()) {
@@ -167,6 +167,8 @@ void AOClient::pktLoadingDone(AreaData* area, int argc, QStringList argv, AOPack
     emit server->updatePlayerCount(server->m_player_count);
     area->clientJoinedArea(-1, m_id);
     arup(ARUPType::PLAYER_COUNT, true); // Tell everyone there is a new player
+
+    server->broadcast(AOPacket("CT", {ConfigManager::oocName(),"[" + QString::number(m_id) + "] joined the server.", "1"}), m_current_area);
 }
 
 void AOClient::pktCharPassword(AreaData* area, int argc, QStringList argv, AOPacket packet)
@@ -250,7 +252,7 @@ void AOClient::pktOocChat(AreaData* area, int argc, QStringList argv, AOPacket p
     QString l_message = dezalgo(argv[1]);
     if (l_message.length() == 0 || l_message.length() > ConfigManager::maxCharacters())
         return;
-    AOPacket final_packet("CT", {m_ooc_name, l_message, "0"});
+    AOPacket final_packet("CT", {getTag(), l_message, "0"});
     if(l_message.at(0) == '/') {
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
         QStringList l_cmd_argv = l_message.split(" ", QString::SplitBehavior::SkipEmptyParts);
@@ -555,7 +557,7 @@ void AOClient::pktAnnounceCase(AreaData* area, int argc, QStringList argv, AOPac
     if (l_needed_roles.isEmpty())
         return;
 
-    QString l_message = "=== Case Announcement ===\r\n" + (m_ooc_name == "" ? m_current_char : m_ooc_name) + " needs " + l_needed_roles.join(", ") + " for " + (l_case_title == "" ? "a case" : l_case_title) + "!";
+    QString l_message = "~ Case Announcement ~\r\n" + getTag() + " needs " + l_needed_roles.join(", ") + " for " + (l_case_title == "" ? "a case" : l_case_title) + "!";
 
     QList<AOClient*> l_clients_to_alert;
     // here lies morton, RIP

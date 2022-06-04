@@ -95,6 +95,13 @@ class AOClient : public QObject {
     Server* getServer();
 
     /**
+     * @brief Get the client's tag.
+     *
+     * @return The tag.
+     */
+    QString getTag();
+
+    /**
      * @brief The user ID of the client.
      */
     int m_id;
@@ -175,22 +182,22 @@ class AOClient : public QObject {
      * @brief If true, the client may not use in-character chat.
      */
     bool m_is_muted = false;
-  
+
     /**
      * @brief If true, the client may not use out-of-character chat.
      */
     bool m_is_ooc_muted = false;
-  
+
     /**
      * @brief If true, the client may not use the music list.
      */
     bool m_is_dj_blocked = false;
-  
+
     /**
      * @brief If true, the client may not use the judge controls.
      */
     bool m_is_wtce_blocked = false;
-    
+
     /**
      * @brief Represents the client's client software, and its version.
      *
@@ -1064,7 +1071,7 @@ class AOClient : public QObject {
      * @brief Bans a client from the server, forcibly severing its connection to the server,
      * and disallowing their return.
      *
-     * @details The first argument is the **target's IPID**, the second is the **duration**, 
+     * @details The first argument is the **target's IPID**, the second is the **duration**,
      * and the third is the **reason** why the client was banned.
      *
      * The duration can be `perma`, meaning a forever ban, otherwise, it must be given in the format of `YYyWWwDDdHHhMMmSSs` to
@@ -1135,7 +1142,7 @@ class AOClient : public QObject {
      * @see #is_ooc_muted
      */
     void cmdOocMute(int argc, QStringList argv);
-  
+
     /**
      * @brief Removes the OOC-muted status from a client.
      *
@@ -1146,7 +1153,7 @@ class AOClient : public QObject {
      * @see #is_ooc_muted
      */
     void cmdOocUnMute(int argc, QStringList argv);
-  
+
     /**
      * @brief WTCE-blocks a client.
      *
@@ -1157,7 +1164,7 @@ class AOClient : public QObject {
      * @see #is_wtce_blocked
      */
     void cmdBlockWtce(int argc, QStringList argv);
-  
+
     /**
      * @brief Removes the WTCE-blocked status from a client.
      *
@@ -1168,7 +1175,7 @@ class AOClient : public QObject {
      * @see #is_wtce_blocked
      */
     void cmdUnBlockWtce(int argc, QStringList argv);
-  
+
     /**
      * @brief Lists the last five bans made on the server.
      *
@@ -1365,7 +1372,7 @@ class AOClient : public QObject {
      */
 
     void cmdSubTheme(int argc, QStringList argv);
-  
+
     /**
      * @brief Writes a "note card" in the current area.
      *
@@ -1375,14 +1382,14 @@ class AOClient : public QObject {
      * @iscommand
      */
     void cmdNoteCard(int argc, QStringList argv);
-  
+
     /**
      * @brief Reveals all note cards in the current area.
      *
      * @iscommand
      */
     void cmdNoteCardReveal(int argc, QStringList argv);
-  
+
     /**
      * @brief Erases the client's note card from the area's list of cards.
      *
@@ -1400,7 +1407,7 @@ class AOClient : public QObject {
      * @iscommand
      */
     void cmd8Ball(int argc, QStringList argv);
-    
+
     ///@}
 
     /**
@@ -2026,7 +2033,7 @@ class AOClient : public QObject {
      */
     void sendNotice(QString f_notice, bool f_global = false);
 
-    
+
     /**
      * @brief Checks if a testimony contains '<' or '>'.
      *
