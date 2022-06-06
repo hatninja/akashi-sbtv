@@ -49,7 +49,14 @@ QStringList AOClient::buildAreaList(int area_idx)
     //entries.append("[" + QString::number(area->playerCount()) + " users][" + QVariant::fromValue(area->status()).toString().replace("_", "-") + "]");
     for (AOClient* client : qAsConst(server->m_clients)) {
         if (client->m_current_area == area_idx && client->m_joined) {
-            QString char_entry = "[" + QString::number(client->m_id) + "] " + client->m_current_char;
+            QString char_entry = "[" + QString::number(client->m_id) + "] ";
+            if (client->m_showname != ""
+             && client->m_showname != client->m_ooc_name
+             && client->m_showname != client->m_current_char) {
+                char_entry += "\"" + client->m_showname + "\"";
+            } else {
+                char_entry += client->m_current_char;
+            }
             if (client->m_current_char == "")
                 char_entry += "Spectator";
             if (client->m_ooc_name != "")
@@ -57,7 +64,7 @@ QStringList AOClient::buildAreaList(int area_idx)
             if (area->owners().contains(client->m_id))
                 char_entry.insert(0, "[CM]");
             if (m_authenticated)
-                char_entry += " (" + client->getIpid() + "): " + client->m_ooc_name;
+                char_entry += " (" + client->getIpid() + ")";
             if (client->m_is_afk)
                 char_entry += " (AFK)";
             entries.append(char_entry);
