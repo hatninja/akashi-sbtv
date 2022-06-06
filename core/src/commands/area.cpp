@@ -53,7 +53,7 @@ void AOClient::cmdCM(int argc, QStringList argv)
             return;
         }
         l_area->addOwner(l_owner_candidate->m_id);
-        sendServerMessageArea(l_owner_candidate->m_ooc_name + " is now CM in this area.");
+        sendServerMessageArea(l_owner_candidate->getTag() + " is now CM in this area.");
         arup(ARUPType::CM, true);
     }
     else {

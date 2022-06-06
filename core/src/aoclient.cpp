@@ -251,7 +251,7 @@ void AOClient::arup(ARUPType type, bool broadcast)
                     const QList<int> l_owner_ids = l_area->owners();
                     for (int l_owner_id : l_owner_ids) {
                         AOClient* l_owner = server->getClientByID(l_owner_id);
-                        l_area_owners.append("[" + QString::number(l_owner->m_id) + "] " + (l_owner->m_ooc_name != "" ? l_owner->m_current_char : l_owner->m_ooc_name));
+                        l_area_owners.append(l_owner->getTag());
                     }
                     l_arup_data.append(l_area_owners.join(", "));
                 }
