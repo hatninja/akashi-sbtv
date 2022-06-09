@@ -2121,7 +2121,7 @@ class AOClient : public QObject {
         {"area_unlock",        {ACLFlags.value("CM"),           0, &AOClient::cmdUnLock}},
         {"timer",              {ACLFlags.value("CM"),           0, &AOClient::cmdTimer}},
         {"area",               {ACLFlags.value("NONE"),         1, &AOClient::cmdArea}},
-        {"play",               {ACLFlags.value("CM"),           1, &AOClient::cmdPlay}},
+        {"play",               {ACLFlags.value("NONE"),           1, &AOClient::cmdPlay}},
         {"areakick",           {ACLFlags.value("CM"),           1, &AOClient::cmdAreaKick}},
         {"area_kick",          {ACLFlags.value("CM"),           1, &AOClient::cmdAreaKick}},
         {"randomchar",         {ACLFlags.value("NONE"),         0, &AOClient::cmdRandomChar}},
