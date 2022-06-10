@@ -87,7 +87,7 @@ int AOClient::genRand(int min, int max)
 
 void AOClient::diceThrower(int argc, QStringList argv, bool p_roll)
 {
-    int l_sides = 6;
+    int l_sides = 20;
     int l_dice = 1;
     QStringList results;
     if (argc >= 1)
