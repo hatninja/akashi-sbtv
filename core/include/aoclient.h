@@ -2215,7 +2215,7 @@ class AOClient : public QObject {
         {"ignore_bglist",      {ACLFlags.value("IGNORE_BGLIST"),0, &AOClient::cmdIgnoreBgList}},
         {"notice",             {ACLFlags.value("SEND_NOTICE"),  1, &AOClient::cmdNotice}},
         {"noticeg",            {ACLFlags.value("SEND_NOTICE"),  1, &AOClient::cmdNoticeGlobal}},
-        {"togglejukebox",      {ACLFlags.value("None"),         0, &AOClient::cmdToggleJukebox}},
+        {"togglejukebox",      {ACLFlags.value("NONE"),         0, &AOClient::cmdToggleJukebox}},
         {"help",               {ACLFlags.value("NONE"),         1, &AOClient::cmdHelp}},
         {"clearcm",            {ACLFlags.value("KICK"),         0, &AOClient::cmdClearCM}},
         {"togglemessage",      {ACLFlags.value("CM"),           0, &AOClient::cmdToggleAreaMessageOnJoin}},

@@ -138,7 +138,7 @@ void AOClient::changeArea(int new_area)
     }
 
     //Print before joining the room. (Hide to user)
-    server->broadcast(AOPacket("CT", {ConfigManager::oocName(), getTag() + "joined this room.", "1"}), new_area);
+    server->broadcast(AOPacket("CT", {ConfigManager::oocName(), getTag() + " joined this room.", "1"}), new_area);
 
     server->m_areas[new_area]->clientJoinedArea(m_char_id, m_id);
     m_current_area = new_area;
